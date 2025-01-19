@@ -1,6 +1,6 @@
 import { GridTileImage } from 'components/grid/tile';
-import { getCollectionProducts } from 'lib/shopify';
-import type { Product } from 'lib/shopify/types';
+import { getCollectionProducts } from 'lib/iiko';
+import type { Product } from 'lib/iiko/types';
 import Link from 'next/link';
 
 function ThreeItemGridItem({
@@ -18,22 +18,24 @@ function ThreeItemGridItem({
     >
       <Link
         className="relative block aspect-square h-full w-full"
-        href={`/product/${item.handle}`}
+        href={`/product/${item.id}`}
         prefetch={true}
       >
         <GridTileImage
-          src={item.featuredImage.url}
+          src={item.imageLinks[0] || ""}
           fill
           sizes={
             size === 'full' ? '(min-width: 768px) 66vw, 100vw' : '(min-width: 768px) 33vw, 100vw'
           }
           priority={priority}
-          alt={item.title}
+          alt={item.name}
           label={{
             position: size === 'full' ? 'center' : 'bottom',
-            title: item.title as string,
-            amount: item.priceRange.maxVariantPrice.amount,
-            currencyCode: item.priceRange.maxVariantPrice.currencyCode
+            title: item.name,
+            amount: item.sizePrices.length === 1
+                ? `${item.sizePrices.at(0)!.price.currentPrice}`
+                : `${item.sizePrices.at(0)!.price.currentPrice} - ${item.sizePrices.at(-1)!.price.currentPrice}`,
+            currencyCode: 'UZS'
           }}
         />
       </Link>
@@ -51,6 +53,7 @@ export async function ThreeItemGrid() {
 
   const [firstProduct, secondProduct, thirdProduct] = homepageItems;
 
+  console.log(firstProduct, secondProduct, thirdProduct)
   return (
     <section className="mx-auto grid max-w-screen-2xl gap-4 px-4 pb-4 md:grid-cols-6 md:grid-rows-2 lg:max-h-[calc(100vh-200px)]">
       <ThreeItemGridItem size="full" item={firstProduct} priority={true} />

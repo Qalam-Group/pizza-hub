@@ -30,7 +30,7 @@ export default function CartModal() {
 
   useEffect(() => {
     if (!cart) {
-      createCartAndSetCookie();
+      // createCartAndSetCookie();
     }
   }, [cart]);
 
